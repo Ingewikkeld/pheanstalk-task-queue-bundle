@@ -80,7 +80,7 @@ class TaskQueueService
      * @param TaskDescriptionInterface $task
      * @param string $tube (optional) the tube to use
      * @throws TaskQueueServiceException
-     * @return void
+     * @return integer the new task ID
      */
     public function queueTask(TaskDescriptionInterface $task, $tube = null)
     {
@@ -94,9 +94,9 @@ class TaskQueueService
         $task->setTaskIdentifier($taskEntity->getId());
         //regenerate it now we have an identifier
         $stringVersion = get_class($task) . '::' . $this->serializer->serialize($task, 'json');
-        $this->beanstalk
-            ->useTube($tube)
-            ->put($stringVersion);
+        return $this->beanstalk
+                    ->useTube($tube)
+                    ->put($stringVersion);
     }
 
     /**
